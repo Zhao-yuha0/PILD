@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>正则表达式在线测试</title>
+    <link rel='dns-prefetch' href='//s.w.org'/>
+    <link rel='stylesheet' id='wpProQuiz_front_style-css'
+          href='https://c.runoob.com/wp-content/plugins/Wp-Pro-Quiz/css/wpProQuiz_front.min.css?ver=0.37'
+          type='text/css' media='all'/>
+
+    <link href="https://cdn.staticfile.org/normalize/7.0.0/normalize.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!-- Custom CSS -->
+    <!--
+    <link href="../static/css/modern-business.css" rel="stylesheet">
+    -->
+    <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
+
+    <script src="https://cdn.staticfile.org/clipboard.js/2.0.4/clipboard.min.js"></script>
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">信息泄露监测系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="{{ url_for('testHistory') }}">测试记录</a></li>
+            <!--<li class="layui-nav-item"><a href="">商品管理</a></li>
+												<li class="layui-nav-item"><a href="">用户</a></li>-->
+            <li class="layui-nav-item"><a href="{{ url_for('userMange') }}">账户管理</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="../static/img/car.jpg" class="layui-nav-img" alt="">
+                    {{ account }}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="{{ url_for('pwdChange') }}">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="{{ url_for('index') }}">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <div title="菜单缩放"
+                 style="width: 200px; padding: 0; line-height: 45px; text-align: center; background: #484F64;  margin-right: 10%;"
+                 class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="nav">
+
+                <li class="layui-nav-item layui-nav-itemed"><a href="{{ url_for('home') }}"><i class="fa fa-vcard fa-lg"></i> <span >系统状态</span></a></li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >监测结果</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('dataPrd') }}"><i class="fa fa-vcard fa-lg"></i> <span >长期监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('dataTempList') }}"><i class="fa fa-vcard fa-lg"></i> <span >临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('data') }}"><i class="fa fa-vcard fa-lg"></i> <span >网页风险信息</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >监测任务</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('taskPrd') }}"><i class="fa fa-vcard fa-lg"></i> <span >长期监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskTemp') }}"><i class="fa fa-vcard fa-lg"></i> <span >临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskRule') }}"><i class="fa fa-vcard fa-lg"></i> <span >泄露检测模型</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >辅助工具</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('testReg') }}"class="layui-this"><i class="fa fa-vcard fa-lg"></i> <span >文本检测测试</span> </a></dd>
+                        <dd><a href="{{ url_for('testRule') }}"><i class="fa fa-vcard fa-lg"></i> <span >监测规则测试</span></a></dd>
+                        <dd><a href="{{ url_for('testSite') }}"><i class="fa fa-vcard fa-lg"></i> <span >监测站点测试</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >运行日志</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('logUsr') }}"><i class="fa fa-vcard fa-lg"></i> <span >用户操作日志</span></a></dd>
+                        <dd><a href="{{ url_for('logSys') }}"><i class="fa fa-vcard fa-lg"></i> <span >系统运行日志</span></a></dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px">
+
+            <div class="container">
+    <br>
+    <style>
+
+        #textPattern {
+            color: #3030C0;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div id="compiler" class="panel-heading">
+                    <form class="form-inline" role="form">
+
+                        <label><strong style="font-size: 16px"><i class="fa fa-cogs"></i> 正则表达式在线测试</strong></label>
+
+                        <button type="button" class="btn btn-warning" id="regSubmit" onclick="return onMatch();"style="margin-left: 30px"> 测试匹配
+                        </button>
+                    </form>
+                </div>
+                <div class="panel-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-danger" style="display: none;">
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12">
+
+                            <form class="form-inline">
+
+                                <div class="form-group col-md-8" style="padding:0;">
+
+
+                                    <div class="form-group" style="width: 100%;">
+
+                                        <div class="input-group input-group-lg" style="width: 100%;">
+                                            <span class="input-group-addon"
+                                                  style="font-size: 18px; font-weight: bold;width:20px;"><i
+                                                    class="fa fa-exclamation-triangle" aria-hidden="true"
+                                                    style="display:none; color: red;"></i> /</span>
+                                            <input type="text" id="textPattern" placeholder="在此输入正则表达式"
+                                                   class="form-control">
+                                            <span class="input-group-addon"
+                                                  style="font-size: 18px; font-weight: bold;width:20px;">/ <span
+                                                    class="marked" id="regFlag">g</span></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="col-md-5 dropdown">
+                                        <button class="btn btn-default dropdown-toggle btn-lg" type="button" id="menu1"
+                                                data-toggle="dropdown"><i class="fa fa-flag" aria-hidden="true"></i> 修饰符
+                                            <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1"
+                                            style="padding: 12px;">
+                                            <li role="presentation">
+                                                <div class="checkbox"><label><input type="checkbox" value="global"
+                                                                                    checked="checked" id="optionGlobal"
+                                                                                    name="optionGlobl"> 全局搜索 -
+                                                    <strong>g</strong></label></div>
+                                            </li>
+                                            <li role="presentation">
+                                                <div class="checkbox"><label><input type="checkbox" value="ignoreCase"
+                                                                                    id="optionIgnoreCase"
+                                                                                    name="optionIgnoreCase"> 忽略大小写 -
+                                                    <strong>i</strong></label></div>
+                                            </li>
+                                            <li role="presentation">
+                                                <div class="checkbox"><label><input type="checkbox" value="multiline"
+                                                                                    id="optionMultiline"
+                                                                                    name="optionMultiline"> 多行模式 -
+                                                    <strong>m</strong></label></div>
+                                            </li>
+                                            </ul>
+
+                                    </div>
+                                    <div class="col-md-7 dropdown">
+                                        </ul>
+                                        <button class="btn btn-default dropdown-toggle btn-lg" type="button" id="menu2"
+                                                data-toggle="dropdown"><i class="fa fa-file-text-o"
+                                                                          aria-hidden="true"></i> 语法参考
+                                            <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu2"
+                                            style="padding: 12px;min-width:350px;">
+                                            <li role="presentation"><code><strong>.</strong></code> - 除换行符以外的所有字符。</li>
+                                            <li role="presentation"><code><strong>^</strong></code> - 字符串开头。</li>
+                                            <li role="presentation"><code><strong>$</strong></code> - 字符串结尾。</li>
+                                            <li role="presentation">
+                                                <strong><code>\d</code>,<code>\w</code>,<code>\s</code></strong> -
+                                                匹配数字、字符、空格。
+                                            </li>
+                                            <li role="presentation">
+                                                <strong><code>\D</code>,<code>\W</code>,<code>\S</code></strong> -
+                                                匹配非数字、非字符、非空格。
+                                            </li>
+                                            <li role="presentation"><code><strong>[abc]</strong></code> - 匹配 a、b 或 c
+                                                中的一个字母。
+                                            </li>
+                                            <li role="presentation"><code><strong>[a-z]</strong></code> - 匹配 a 到 z
+                                                中的一个字母。
+                                            </li>
+                                            <li role="presentation"><code><strong>[^abc]</strong></code> - 匹配除了 a、b 或 c
+                                                中的其他字母。
+                                            </li>
+                                            <li role="presentation"><code><strong>aa|bb</strong></code> - 匹配 aa 或 bb。
+                                            </li>
+                                            <li role="presentation"><code><strong>?</strong></code> - 0 次或 1 次匹配。</li>
+
+
+                                            <li role="presentation"><code><strong>*</strong></code> - 匹配 0 次或多次。</li>
+                                            <li role="presentation"><code><strong>+</strong></code> - 匹配 1 次或多次。</li>
+                                            <li role="presentation"><code><strong>{<em>n</em>}</strong></code> - 匹配 <em>n</em>次。
+                                            </li>
+                                            <li role="presentation"><code><strong>{<em>n</em>,}</strong></code> - 匹配
+                                                <em>n</em>次以上。
+                                            </li>
+                                            <li role="presentation">
+                                                <code><strong>{<em>m</em>,<em>n</em>}</strong></code> - 最少 <em>m</em>
+                                                次，最多 <em>n</em> 次匹配。
+                                            </li>
+                                            <li role="presentation">
+                                                <strong><code>(</code><em>expr</em><code>)</code></strong> - 捕获
+                                                <em>expr</em> 子模式,以 <code>\1</code> 使用它。
+                                            </li>
+                                            <li role="presentation"><strong><code>(?:</code><em>expr</em><code>)</code></strong>
+                                                - 忽略捕获的子模式。
+                                            </li>
+                                            <li role="presentation"><strong><code>(?=</code><em>expr</em><code>)</code></strong>
+                                                - 正向预查模式 <em>expr</em>。
+                                            </li>
+                                            <li role="presentation"><strong><code>(?!</code><em>expr</em><code>)</code></strong>
+                                                - 负向预查模式 <em>expr</em>。
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-12" style="font-size:14px;padding-top: 12px;">
+                            <textarea rows="6" id="textSour" placeholder="在此输入待匹配文本" class="form-control"></textarea>
+
+                        </div>
+                        <div class="col-md-12" style="font-size:14px;padding-top: 12px;">
+                            <textarea rows="6" readonly="readonly" placeholder="匹配结果..." id="textMatchResult"
+                                      class="form-control"></textarea>
+
+                        </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+
+
+        </div>
+
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        各语言代码参考
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" id="alert-message"></div>
+                    <div id="languagelist">
+
+
+                        <h4>JavaScript - <a href="http://www.runoob.com/js/js-regexp.html" target="_blank">JavaScript
+                            正则表达式</a></h4>
+                        <pre id="js"></pre>
+
+                        <h4>PHP</h4>
+                        <pre id="php"></pre>
+
+                        <h4>Go</h4>
+                        <pre id="go"></pre>
+
+                        <h4>JAVA - <a href="http://www.runoob.com/java/java-regular-expressions.html" target="_blank">Java
+                            正则表达式</a></h4>
+                        <pre id="java"></pre>
+
+                        <h4>Ruby - <a href="http://www.runoob.com/ruby/ruby-regular-expressions.html" target="_blank">Ruby
+                            正则表达式</a></h4>
+                        <pre id="rb"></pre>
+
+                        <h4>Python - <a href="http://www.runoob.com/python/python-reg-expressions.html" target="_blank">Python
+                            正则表达式</a></h4>
+                        <pre id="py"></pre>
+
+                    </div>
+
+
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © copyright - SILD
+    </div>
+</div>
+<script src="../static/layui/layui.js"></script>
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+        element.init()
+
+    });
+</script>
+
+<script>
+        function setVisible(idElement, visible) {
+            var obj = document.getElementById(idElement);
+            obj.style.visibility = visible ? "visible" : "hidden";
+        }
+
+        function isValidFields() {
+            var textSour = document.getElementById("textSour");
+            if (null == textSour.value || textSour.value.length < 1) {
+                textSour.focus();
+                $(".fa-exclamation-triangle").show();
+                // $(".alert-danger").html("请输入待匹配文本").show().fadeOut(5000);
+                return false;
+            }
+            var textPattern = document.getElementById("textPattern");
+            if (null == textPattern.value || textPattern.value.length < 1) {
+                textPattern.focus();
+                $(".fa-exclamation-triangle").show();
+                //$(".alert-danger").html("请输入正则表达式").show().fadeOut(5000);
+                return false;
+            }
+            return true;
+        }
+
+        function buildRegex() {
+            var op = "";
+            if (document.getElementById("optionGlobal").checked) op = "g";
+            if (document.getElementById("optionIgnoreCase").checked) op = op + "i";
+            if (document.getElementById("optionMultiline").checked) op = op + "m";
+
+            $("#regFlag").html(op);
+            try {
+                $(".fa-exclamation-triangle").hide();
+                return new RegExp(document.getElementById("textPattern").value, op);
+            } catch (err) {
+                $(".fa-exclamation-triangle").show();
+            }
+
+        }
+
+        function onMatch() {
+            var regex = buildRegex();
+            if (!isValidFields())
+                return false;
+            document.getElementById("textMatchResult").value = "";
+
+            var result = document.getElementById("textSour").value.match(regex);
+            if (null == result || 0 == result.length) {
+                document.getElementById("textMatchResult").value = "（没有匹配）";
+                return false;
+            }
+            if (document.getElementById("optionGlobal").checked) {
+                var strResult = "共找到 " + result.length + " 处匹配：\r\n";
+                for (var i = 0; i < result.length; ++i) strResult = strResult + result[i] + "\r\n";
+                document.getElementById("textMatchResult").value = strResult;
+            } else {
+                document.getElementById("textMatchResult").value = "匹配位置：" + regex.lastIndex + "\r\n匹配结果：" + result[0];
+            }
+            return true;
+        }
+
+        function onReplace() {
+            var str = document.getElementById("textSour").value;
+            var regex = buildRegex();
+            document.getElementById("textReplaceResult").value = str.replace(regex, document.getElementById("textReplace").value);
+        }
+
+        function reset() {
+            $("#textSour").val("");
+            $("#textPattern").val("");
+            $("#textMatchResult").val("");
+            $("#textReplace").val("");
+            $("#textReplaceResult").val("");
+        }
+
+        String.prototype.format = function (args) {
+            if (arguments.length > 0) {
+                var result = this;
+                if (arguments.length == 1 && typeof (args) == "object") {
+                    for (var key in args) {
+                        var reg = new RegExp("({" + key + "})", "g");
+                        result = result.replace(reg, args[key]);
+                    }
+                } else {
+                    for (var i = 0; i < arguments.length; i++) {
+                        if (arguments[i] == undefined) {
+                            result = result.replace(reg, arguments[i]);
+                        } else {
+                            var reg = new RegExp('\\{' + i + '\\}', 'gm');
+                            ;
+                            result = result.replace(reg, arguments[i]);
+                        }
+                    }
+                }
+                return result;
+            } else {
+                return this;
+            }
+        }
+        var languageCode = {
+            js: "var pattern = /{0}/,\n\tstr = '{1}';\nconsole.log(pattern.test(str));",
+            php: "$str = '{1}';\n$isMatched = preg_match('/{0}/', $str, $matches);\nvar_dump($isMatched, $matches);",
+            py: "import re\npattern = re.compile(ur'{0}')\nstr = u'{1}'\nprint(pattern.search(str))",
+            java: "import java.util.regex.Matcher;\nimport java.util.regex.Pattern;\n\npublic class RegexMatches {\n\t\n\tpublic static void main(String args[]) {\n\t\tString str = \"{1}\";\n\t\tString pattern = \"{0}\";\n\n\t\tPattern r = Pattern.compile(pattern);\n\t\tMatcher m = r.matcher(str);\n\t\tSystem.out.println(m.matches());\n\t}\n\n}",
+            go: "package main\n\nimport (\n\t\"fmt\"\n\t\"regexp\"\n)\n\nfunc main() {\n\tstr := \"{1}\"\n\tmatched, err := regexp.MatchString(\"{0}\", str)\n\tfmt.Println(matched, err)\n}",
+            rb: "pattern = /{0}/\nstr = '{1}'\np pattern.match(str)"
+        };
+        $(document).ready(function () {
+            $("#right_area li a").click(function () {
+                $("#textPattern").val($(this).attr("title"));
+                onMatch();
+            });
+
+            $(".checkbox").change(function () {
+                onMatch();
+            });
+            $("#textPattern").on("change keyup paste", function () {
+                if ($("#textSour").val() != "" && $("#textSour").val().length > 0) {
+                    onMatch();
+                }
+            });
+
+            $("#textSour").on("change keyup paste", function () {
+                if ($("#textPattern").val() != "" && $("#textPattern").val().length > 0) {
+                    onMatch();
+                }
+            });
+
+            $('#myModal').on('show.bs.modal', function () {
+
+
+                var pattern = $("#textPattern").val();
+                if (!pattern) {
+                    $("#alert-message").html("你还没输入正则表达式").show();
+                } else {
+                    $("#alert-message").hide();
+                }
+                var prelist = $("#languagelist pre");
+                for (var i = 0; i < prelist.length; i++) {
+                    var pre = $(prelist[i]);
+                    var language = pre.attr("id");
+                    if (language == 'go' || language == 'java') {
+                        pattern2 = pattern.replace(/\\/gi, "\\\\");
+                        pre.html(languageCode[language].format(pattern2, ""));
+                    } else {
+                        pre.html(languageCode[language].format(pattern, ""));
+                    }
+
+                }
+            });
+        });
+
+    </script>
+
+<div style="display:none;">
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            // 统计
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?68c6d4f0f6c20c5974b17198fa6fd40a";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        $(function () {
+            //代码高亮
+            $('pre').each(function () {
+                if (!$(this).hasClass("prettyprint")) {
+                    $(this).addClass("prettyprint");
+                }
+            });
+        })
+    </script>
+
+</div>
+
+<script src="//cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+    var isShow = true;  //定义一个标志位
+    $('.kit-side-fold').click(function () {
+        //选择出所有的span，并判断是不是hidden
+        $('.layui-nav-item span').each(function () {
+            if ($(this).is(':hidden')) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+        //判断isshow的状态
+        if (isShow) {
+            $('.layui-side.layui-bg-black').width(60); //设置宽度
+            $('.kit-side-fold i').css('margin-right', '70%');  //修改图标的位置
+            //将footer和body的宽度修改
+            $('.layui-body').css('left', 60 + 'px');
+            $('.layui-footer').css('left', 60 + 'px');
+            //将二级导航栏隐藏
+            $('dd span').each(function () {
+                $(this).hide();
+            });
+            //修改标志位
+            isShow = false;
+        } else {
+            $('.layui-side.layui-bg-black').width(200);
+            $('.kit-side-fold i').css('margin-right', '10%');
+            $('.layui-body').css('left', 200 + 'px');
+            $('.layui-footer').css('left', 200 + 'px');
+            $('dd span').each(function () {
+                $(this).show();
+            });
+            isShow = true;
+        }
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>SILD--System of Information Leakage Detection</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<script src="../static/js/jquery.js"></script>
+<script src="../static/js/echarts.js"></script>
+<script src="../static/layui/layui.js"></script>
+
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">信息泄露监测系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="{{ url_for('testHistory') }}">测试记录</a></li>
+            <!--<li class="layui-nav-item"><a href="">商品管理</a></li>
+												<li class="layui-nav-item"><a href="">用户</a></li>-->
+            <li class="layui-nav-item"><a href="{{ url_for('userMange') }}">账户管理</a></li>
+        </ul>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="../static/img/car.jpg" class="layui-nav-img" alt="">
+                    {{ account }}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="{{ url_for('pwdChange') }}">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="{{ url_for('index') }}">退出</a></li>
+        </ul>
+
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <div title="菜单缩放"
+                 style="width: 200px; padding: 0; line-height: 45px; text-align: center; background: #484F64;  margin-right: 10%;"
+                 class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="nav">
+
+                <li class="layui-nav-item layui-nav-itemed"><a href="{{ url_for('home') }}" class="layui-this"><i class="fa fa-vcard fa-lg"></i> <span >系统状态</span></a></li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >监测结果</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('dataPrd') }}"><i class="fa fa-vcard fa-lg"></i> <span >长期监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('dataTempList') }}"><i class="fa fa-vcard fa-lg"></i> <span >临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('data') }}" ><i class="fa fa-vcard fa-lg"></i> <span >网页风险信息</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >监测任务</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('taskPrd') }}"><i class="fa fa-vcard fa-lg"></i> <span >长期监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskTemp') }}"><i class="fa fa-vcard fa-lg"></i> <span >临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskRule') }}"><i class="fa fa-vcard fa-lg"></i> <span >泄露检测模型</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >辅助工具</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('testReg') }}"><i class="fa fa-vcard fa-lg"></i> <span >文本检测测试</span> </a></dd>
+                        <dd><a href="{{ url_for('testRule') }}"><i class="fa fa-vcard fa-lg"></i> <span >监测规则测试</span></a></dd>
+                        <dd><a href="{{ url_for('testSite') }}"><i class="fa fa-vcard fa-lg"></i> <span >监测站点测试</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >运行日志</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('logUsr') }}"><i class="fa fa-vcard fa-lg"></i> <span >用户操作日志</span></a></dd>
+                        <dd><a href="{{ url_for('logSys') }}"><i class="fa fa-vcard fa-lg"></i> <span >系统运行日志</span></a></dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <div style="padding: 15px">
+            <div style="padding:20px;text-align: center;font-size:30px">系统状态</div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>系统信息</legend>
+            </fieldset>
+
+            {#            <div style="padding: 20px; background-color: #f2f2f2;">#}
+            {#                <div class="layui-row layui-col-space18">#}
+            {##}
+            {#                    <div class="layui-col-md2">#}
+            {#                        <div class="layui-card">#}
+            {#                            <div class="layui-card-header">总磁盘</div>#}
+            {#                            <div class="layui-card-body">#}
+            {#                                {{ sysData[4] }}M#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {##}
+            {#                    <div class="layui-col-md2">#}
+            {#                        <div class="layui-card">#}
+            {#                            <div class="layui-card-header">已用磁盘</div>#}
+            {#                            <div class="layui-card-body">#}
+            {#                                {{ sysData[5] }}M#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {##}
+            {#                    <div class="layui-col-md2">#}
+            {#                        <div class="layui-card">#}
+            {#                            <div class="layui-card-header">总内存</div>#}
+            {#                            <div class="layui-card-body">#}
+            {#                                {{ sysData[6] }}M#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {##}
+            {#                    <div class="layui-col-md2">#}
+            {#                        <div class="layui-card">#}
+            {#                            <div class="layui-card-header">已用内存</div>#}
+            {#                            <div class="layui-card-body">#}
+            {#                                {{ sysData[7] }}M#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {##}
+            {#                    <div class="layui-col-md2">#}
+            {#                        <div class="layui-card">#}
+            {#                            <div class="layui-card-header">发送流量</div>#}
+            {#                            <div class="layui-card-body">#}
+            {#                                {{ sysData[8] }}M#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {##}
+            {#                    <div class="layui-col-md2">#}
+            {#                        <div class="layui-card">#}
+            {#                            <div class="layui-card-header">接收流量</div>#}
+            {#                            <div class="layui-card-body">#}
+            {#                                {{ sysData[9] }}M#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {##}
+            {##}
+            {#                </div>#}
+            {##}
+            {#            </div>#}
+
+            <div id="main01" style="width: 33.3%;height:200px; float: left"></div>
+            <div id="main02" style="width: 33.3%;height:200px; float: left"></div>
+            <div id="container" style="width: 33.3%;height:200px;float: left"></div>
+            <script type="text/javascript">
+                $(function () {
+                    $.ajax({
+                        type: 'post',
+                        async: true, //同步执行
+                        url: "{{url_for('erchart')}}", //后台地址
+                        data: {}, //无参数
+                        dataType: 'json', //返回数据形式为json
+                        success: function (result) {
+                            if (result) {
+
+                                // console.log(result.data) undefined
+                                //把result(即Json数据)以参数形式放入Echarts代码中
+                                //因为我返回的是Json格式如下，需要取到data的值，所以传入result.data
+                                bind01(result);
+                            }
+                        },
+                        error: function (errorMsg) {
+                            alert("加载数据失败");
+                        }
+                    }); //ajax
+                    $.ajax({
+                        type: 'post',
+                        async: true, //同步执行
+                        url: "{{url_for('erchart')}}", //后台地址
+                        data: {}, //无参数
+                        dataType: 'json', //返回数据形式为json
+                        success: function (result) {
+                            if (result) {
+
+                                // console.log(result.data) undefined
+                                //把result(即Json数据)以参数形式放入Echarts代码中
+                                //因为我返回的是Json格式如下，需要取到data的值，所以传入result.data
+                                bind02(result);
+                            }
+                        },
+                        error: function (errorMsg) {
+                            alert("加载数据失败");
+                        }
+                    });
+                   // $.ajax({
+                   //     type: 'post',
+                    //    async: true, //同步执行
+                    //    url: "{{url_for('erchart')}}", //后台地址
+                    //    data: {}, //无参数
+                    //    dataType: 'json', //返回数据形式为json
+                    //    success: function (result) {
+                    //        if (result) {
+
+                                // console.log(result.data) undefined
+                                //把result(即Json数据)以参数形式放入Echarts代码中
+                                //因为我返回的是Json格式如下，需要取到data的值，所以传入result.data
+                         //       bind03(result);
+                     //       }
+                  //      },
+                  //      error: function (errorMsg) {
+                   //         alert("加载数据失败");
+                   //     }
+                  //  });
+
+                    function bind01(result) {
+                        var pieChart = echarts.init(document.getElementById("main01"), 'light');
+                        var pieoption = {
+                            title: {
+                                text: '磁盘(M)',
+                                x: 'center'
+                            },
+                            tooltip: {
+                                show: true
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                x: 'left',
+                                data: ['已用磁盘', '可用磁盘']
+                            },
+                            calculable: true,
+                            series: [
+                                {
+                                    name: '访问来源',
+                                    type: 'pie',
+                                    radius: '55%',
+                                    center: ['50%', '60%'],
+                                    data: [
+                                        //这里点所需要的数据即可
+                                        {"value": result.num1, "name": '已用磁盘'},
+                                        {"value": result.num2, "name": '可用磁盘'},
+                                    ]
+                                }
+                            ]
+                        };
+                        pieChart.setOption(pieoption);
+                        $(window).resize(pieChart.resize);
+                    };
+
+                    function bind02(result) {
+                        var pieChart = echarts.init(document.getElementById("main02"), 'light');
+                        var pieoption = {
+                            title: {
+                                text: '内存(M)',
+                                x: 'center'
+                            },
+                            tooltip: {
+                                show: true
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                x: 'left',
+                                data: ['已用内存', '可用内存']
+                            },
+                            calculable: true,
+                            series: [
+                                {
+                                    name: '访问来源',
+                                    type: 'pie',
+                                    radius: '55%',
+                                    center: ['50%', '60%'],
+                                    data: [
+                                        {"value": result.num3, "name": '已用内存'},
+                                        {"value": result.num4, "name": '可用内存'},
+
+                                    ]
+                                }
+                            ]
+                        };
+                        pieChart.setOption(pieoption);
+                        $(window).resize(pieChart.resize);
+                    };
+
+                    {#function bind03(result) {#}
+                    {#    var pieChart = echarts.init(document.getElementById("main03"), 'light');#}
+                    {#    var pieoption = {#}
+                    {#        title: {#}
+                    {#            text: '收发流量(M)',#}
+                    {#            x: 'center'#}
+                    {#        },#}
+                    {#        tooltip: {#}
+                    {#            show: true#}
+                    {#        },#}
+                    {#        legend: {#}
+                    {#            orient: 'vertical',#}
+                    {#            x: 'left',#}
+                    {#            data: ['发送流量', '接收流量']#}
+                    {#        },#}
+                    {#        calculable: true,#}
+                    {#        series: [#}
+                    {#            {#}
+                    {#                name: '访问来源',#}
+                    {#                type: 'pie',#}
+                    {#                radius: '55%',#}
+                    {#                center: ['50%', '60%'],#}
+                    {#                data: [#}
+                    {#                    {"value": result.num5, "name": '发送流量'},#}
+                    {#                    {"value": result.num6, "name": '接收流量'}#}
+                    {#                ]#}
+                    {#            }#}
+                    {#        ]#}
+                    {#    };#}
+                    {#    pieChart.setOption(pieoption);#}
+                    {#    $(window).resize(pieChart.resize);#}
+                   // {#};#}
+
+                    var dom = document.getElementById("container");
+
+                    var myChart = echarts.init(dom);
+                    var app = {};
+                    var obj;
+                    var option;
+                    $.ajax({
+                            type: 'post',
+                            async: false, //同步执行
+                            url: "{{url_for('erchart1')}}", //后台地址
+                            data: {}, //无参数
+                            dataType: 'json', //返回数据形式为json
+                            success: function (callback) {
+                                value=(callback) ;
+                                obj=JSON.parse(value);
+                                // console.log(typeof (obj))
+                                // console.log(obj[0])
+                            },
+                            error: function (errorMsg) {
+                                alert("加载数据失败");
+                            }
+                        }); //ajax
+                    function randomData() {
+                        now = new Date(+now + oneDay);
+                        value=0
+    // value = value + Math.random() * 21 - 10;
+    // value=500;
+                        $.ajax({
+                            type: 'post',
+                            async: false, //同步执行
+                            url: "{{url_for('erchart2')}}", //后台地址
+                            data: {}, //无参数
+                            dataType: 'json', //返回数据形式为json
+                            success: function (callback) {
+                                value=callback.num5;
+                                // console.log(value)
+                            },
+                            error: function (errorMsg) {
+                                alert("加载数据失败");
+                            }
+                        }); //ajax
+                        var valueName = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() +
+                         ' ' + (now.getHours() >= 10 ? now.getHours() : '0' + now.getHours()) + ':' +
+                         (now.getMinutes() >= 10 ? now.getMinutes() : '0' + now.getMinutes()) +
+                     ':' + (now.getSeconds() >= 10 ? now.getSeconds() : '0' + now.getSeconds());
+
+    return {
+        name: now.toString(),
+        value: [
+            valueName,
+            Math.round(value)
+        ]
+    }
+}
+
+var data = [];
+var now = +new Date();
+var oneDay = 1000;
+
+for (var i = 0; i < 10; i++) {
+ now = new Date(+now + oneDay);
+ var valueName = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() +
+        ' ' + (now.getHours() >= 10 ? now.getHours() : '0' + now.getHours()) + ':' +
+        (now.getMinutes() >= 10 ? now.getMinutes() : '0' + now.getMinutes()) +
+        ':' + (now.getSeconds() >= 10 ? now.getSeconds() : '0' + now.getSeconds());
+    data.push({name:now.toString(), value:[valueName, Math.round(obj[i])]});
+    console.log(obj[i])
+}
+
+
+option = {
+    title: {
+        text: '动态数据 + 时间坐标轴'
+    },
+    tooltip: {
+        trigger: 'axis',
+        formatter: function(params) {
+            params = params[0];
+            var date = new Date(params.name);
+            return date.getFullYear()+'/'+(date.getMonth() + 1) + '/' + date.getDate() + '/'+ ' : ' + params.value[1];
+        },
+        axisPointer: {
+            animation: false
+        }
+    },
+    xAxis: {
+        type: 'time',
+        splitLine: {
+            show: false
+        },
+        triggerEvent: true
+    },
+    yAxis: {
+        type: 'value',
+        boundaryGap: [0, '100%'],
+        splitLine: {
+            show: false
+        }
+    },
+    series: [{
+        name: '模拟数据',
+        type: 'line',
+        showSymbol: false,
+        hoverAnimation: false,
+        data: data
+    }]
+};
+
+setInterval(function() {
+
+    // for (var i = 0; i < 1; i++) {
+        data.shift();
+        data.push(randomData());//渲染数据的作用
+    // }
+
+    //alert(data[999].name)
+    myChart.setOption({
+        series: [{
+            data: data,
+        }]
+    });
+}, 1000);
+if (option && typeof option === 'object') {
+    myChart.setOption(option);
+}
+
+
+})
+ </script>
+
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>系统任务</legend>
+            </fieldset>
+
+            <div style="padding: 20px; background-color: #f2f2f2;">
+                <div class="layui-row layui-col-space18">
+
+                    <div class="layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">待执行任务</div>
+
+                            <div class="layui-col-md6">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">任务名称</div>
+                                    {% for task in taskWaiting %}
+                                        <div class="layui-card-body"> {{ task.name }} </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="layui-col-md6">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">检测范围</div>
+                                    {% for task in taskWaiting %}
+                                        <div class="layui-card-body"> {{ task.range }} </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">执行中任务</div>
+
+                            <div class="layui-col-md6">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">任务名称</div>
+                                    {% for task in taskRunning %}
+                                        <div class="layui-card-body"> {{ task.name }} </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="layui-col-md6">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">检测范围</div>
+                                    {% for task in taskRunning %}
+                                        <div class="layui-card-body" > {{ task.domain }} </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">任务进度</div>
+                            <div class="layui-col-md6">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">任务名称</div>
+                                    {% for data in batchData %}
+                                        <div class="layui-card-body"> {{ data.name }} </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="layui-col-md6">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">进行情况</div>
+                                    {% for data in batchData %}
+                                        <div class="layui-card-body" style="height: 24px">
+                                            <div class="layui-progress layui-progress-big" lay-showpercent="true">
+                                                <div class="layui-progress-bar"
+                                                     lay-percent="{{ data.runningCount }}/{{ data.allCount }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © copyright - SILD
+    </div>
+</div>
+
+
+<script src="../static/layui/layui.js"></script>
+<script>
+    layui.use(['element', 'layer'], function () {
+        var element = layui.element;
+        var layer = layui.layer;
+
+        //监听折叠
+        element.on('collapse(test)', function (data) {
+            //layer.msg('展开状态：'+ data.show);
+        });
+    });
+
+</script>
+<script>
+
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+    var isShow = true;  //定义一个标志位
+    $('.kit-side-fold').click(function () {
+        //选择出所有的span，并判断是不是hidden
+        $('.layui-nav-item span').each(function () {
+            if ($(this).is(':hidden')) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+        //判断isshow的状态
+        if (isShow) {
+            $('.layui-side.layui-bg-black').width(60); //设置宽度
+            $('.kit-side-fold i').css('margin-right', '70%');  //修改图标的位置
+            //将footer和body的宽度修改
+            $('.layui-body').css('left', 60 + 'px');
+            $('.layui-footer').css('left', 60 + 'px');
+            //将二级导航栏隐藏
+            $('dd span').each(function () {
+                $(this).hide();
+            });
+            //修改标志位
+            isShow = false;
+        } else {
+            $('.layui-side.layui-bg-black').width(200);
+            $('.kit-side-fold i').css('margin-right', '10%');
+            $('.layui-body').css('left', 200 + 'px');
+            $('.layui-footer').css('left', 200 + 'px');
+            $('dd span').each(function () {
+                $(this).show();
+            });
+            isShow = true;
+        }
+    });
+
+</script>
+</body>
+</html>

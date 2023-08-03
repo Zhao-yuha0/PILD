@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>长期监测任务</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">信息泄露监测系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="{{ url_for('testHistory') }}">测试记录</a></li>
+            <!--<li class="layui-nav-item"><a href="">商品管理</a></li>
+												<li class="layui-nav-item"><a href="">用户</a></li>-->
+            <li class="layui-nav-item"><a href="{{ url_for('userMange') }}">账户管理</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="../static/img/car.jpg" class="layui-nav-img" alt="">
+                    {{ account }}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="{{ url_for('pwdChange') }}">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="{{ url_for('index') }}">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <div title="菜单缩放"
+                 style="width: 200px; padding: 0; line-height: 45px; text-align: center; background: #484F64;  margin-right: 10%;"
+                 class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="nav">
+
+                <li class="layui-nav-item layui-nav-itemed"><a href="{{ url_for('home') }}"><i
+                        class="fa fa-vcard fa-lg"></i> <span>系统状态</span></a></li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span>监测结果</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('dataPrd') }}"><i class="fa fa-vcard fa-lg"></i> <span>长期监测任务</span></a>
+                        </dd>
+                        <dd><a href="{{ url_for('dataTempList') }}"><i class="fa fa-vcard fa-lg"></i>
+                            <span>临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('data') }}" ><i class="fa fa-vcard fa-lg"></i> <span>网页风险信息</span></a>
+                        </dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span>监测任务</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('taskPrd') }}" class="layui-this"><i class="fa fa-vcard fa-lg"></i> <span>长期监测任务</span></a>
+                        </dd>
+                        <dd><a href="{{ url_for('taskTemp') }}"><i class="fa fa-vcard fa-lg"></i>
+                            <span>临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskRule') }}"><i class="fa fa-vcard fa-lg"></i>
+                            <span>泄露检测模型</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span>辅助工具</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('testReg') }}"><i class="fa fa-vcard fa-lg"></i> <span>文本检测测试</span>
+                        </a></dd>
+                        <dd><a href="{{ url_for('testRule') }}"><i class="fa fa-vcard fa-lg"></i>
+                            <span>监测规则测试</span></a></dd>
+                        <dd><a href="{{ url_for('testSite') }}"><i class="fa fa-vcard fa-lg"></i>
+                            <span>监测站点测试</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span>运行日志</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('logUsr') }}"><i class="fa fa-vcard fa-lg"></i> <span>用户操作日志</span></a>
+                        </dd>
+                        <dd><a href="{{ url_for('logSys') }}"><i class="fa fa-vcard fa-lg"></i> <span>系统运行日志</span></a>
+                        </dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+
+        <div style="padding: 15px">
+
+            <div class="layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">日期范围</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="test6" placeholder=" - ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="layui-hide" id="table" lay-filter="myTable"></table>
+
+            <script type="text/html" id="myToolBar">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+                </div>
+            </script>
+
+            <script type="text/html" id="myTool">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © copyright - SILD
+    </div>
+</div>
+<script src="../static/layui/layui.js"></script>
+<script src="../static/js/jquery.js"></script>
+
+<script>
+
+    layui.use('element', function () {
+        var element = layui.element;
+        element.init()
+    });
+
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //日期范围
+        laydate.render({
+            elem: '#test6'
+            , range: true
+        });
+    });
+
+    layui.use('table', function () {
+        var table = layui.table;
+        table.render({
+            elem: '#table',
+            url: '{{ url_for("dataPrd.showPrdTaskByName", taskName = taskName) }}',
+            contentType: 'application/json',
+            toolbar: '#myToolBar', //开启头部工具栏，并为其绑定左侧模板
+            title: '临时任务列表',
+            height: 'full-200',
+            initSort: {field:'start_time', type:'desc'},
+
+            defaultToolbar: ['filter', 'exports', 'print'],
+
+            page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                elem: 'table',
+                limit: 50,
+                limits: [10, 50, 100, 200],
+                first: '首页',
+                last: '尾页',
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'], //自定义分页布局
+                //curr: 5, //设定初始在第 5 页
+                groups: 10,//只显示 10 个连续页码
+            },
+
+            cols: [[
+                {type: 'checkbox', fixed: 'left'},
+                {type: 'numbers', title: '序号', width: "5%", sort: true, resize:'true'},
+
+                {field: 'taskID', title: '任务ID', width: "10%", sort: true, hide:true},
+                {field: 'name', title: '任务名称', width: "10%", sort: true},
+                {field: 'domain', title: '检测范围', width: "14%"},
+                {field: 'start_time', title: '任务开始时间', width: "12%", sort: true },
+                {field: 'end_time', title: '任务结束时间', width: "12%"},
+                {field: 'rules', title: '检测规则', width: "12%"},
+                {field: 'page', title: '检测页面数量/个', width: "10%", sort: true},
+                {field: 'count', title: '泄露信息数量/条', width: "10%", sort: true},
+
+                {title: '操作', toolbar: '#myTool', width: "10%",}
+            ]],
+
+            response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            },
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                var result;
+                //console.log(this);
+                //console.log(JSON.stringify(res));/
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+
+        });
+
+        table.on('toolbar(myTable)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+
+                //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
+            }
+            ;
+        });
+
+        //监听行工具事件
+        table.on('tool(myTable)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+                var id = data.id
+                var name=data.name
+                url = 'dataTempInfo/' + data.id;
+                name0='dataPrdTask/'+data.name;
+                {#url = {{ url_for('dataTemp.dataTempInfo',taskID = id) }}#}
+                alert(window.document.location.href.replace(name0,url))
+                a=window.document.location.href
+                a0=a.replace(name0)
+                alert(a0)
+                alert(location.replace(url))
+                // alert(location.replace('{}'.format(name0),'{}'.format(url)))
+                // window.open(location.replace('{}'.format(name0),'{}'.format(url)));
+            }
+            else if (obj.event === 'del') {
+                layer.confirm('确定删除任务？', function (index) {
+                    obj.del();
+                    console.log(obj.data.id)
+                    var input = {
+                        data: JSON.stringify({
+                            "id": obj.data.id
+                        }),
+                    }
+                    $.ajax({
+                        url: "{{ url_for('dataPrd.delPrdData') }}",
+                        type: "POST",
+                        data: input,
+                        success: function () {
+                            console.log('del success')
+                        }
+                    });
+                    layer.close(index);
+
+                });
+            }
+        });
+
+    });
+
+</script>
+<script>
+
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+    var isShow = true;  //定义一个标志位
+    $('.kit-side-fold').click(function () {
+        //选择出所有的span，并判断是不是hidden
+        $('.layui-nav-item span').each(function () {
+            if ($(this).is(':hidden')) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+        //判断isshow的状态
+        if (isShow) {
+            $('.layui-side.layui-bg-black').width(60); //设置宽度
+            $('.kit-side-fold i').css('margin-right', '70%');  //修改图标的位置
+            //将footer和body的宽度修改
+            $('.layui-body').css('left', 60 + 'px');
+            $('.layui-footer').css('left', 60 + 'px');
+            //将二级导航栏隐藏
+            $('dd span').each(function () {
+                $(this).hide();
+            });
+            //修改标志位
+            isShow = false;
+        } else {
+            $('.layui-side.layui-bg-black').width(200);
+            $('.kit-side-fold i').css('margin-right', '10%');
+            $('.layui-body').css('left', 200 + 'px');
+            $('.layui-footer').css('left', 200 + 'px');
+            $('dd span').each(function () {
+                $(this).show();
+            });
+            isShow = true;
+        }
+    });
+
+</script>
+</body>
+</html>

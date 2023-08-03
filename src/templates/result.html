@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>任务已提交</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">信息泄露监测系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="{{ url_for('testHistory') }}">测试记录</a></li>
+            <!--<li class="layui-nav-item"><a href="">商品管理</a></li>
+												<li class="layui-nav-item"><a href="">用户</a></li>-->
+            <li class="layui-nav-item"><a href="{{ url_for('userMange') }}">账户管理</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="../static/img/car.jpg" class="layui-nav-img" alt="">
+                    {{ account }}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="{{ url_for('pwdChange') }}">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="{{ url_for('index') }}">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <div title="菜单缩放"
+                 style="width: 200px; padding: 0; line-height: 45px; text-align: center; background: #484F64;  margin-right: 10%;"
+                 class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="nav">
+
+                <li class="layui-nav-item layui-nav-itemed"><a href="{{ url_for('home') }}"><i class="fa fa-vcard fa-lg"></i> <span >系统状态</span></a></li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >监测结果</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('dataPrd') }}"><i class="fa fa-vcard fa-lg"></i> <span >长期监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('dataTempList') }}"><i class="fa fa-vcard fa-lg"></i> <span >临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('data') }}" class="layui-this"><i class="fa fa-vcard fa-lg"></i> <span >网页风险信息</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >监测任务</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('taskPrd') }}"><i class="fa fa-vcard fa-lg"></i> <span >长期监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskTemp') }}"class="layui-this"><i class="fa fa-vcard fa-lg"></i> <span >临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskRule') }}"><i class="fa fa-vcard fa-lg"></i> <span >泄露检测模型</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >辅助工具</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('testReg') }}"><i class="fa fa-vcard fa-lg"></i> <span >文本检测测试</span> </a></dd>
+                        <dd><a href="{{ url_for('testRule') }}"><i class="fa fa-vcard fa-lg"></i> <span >监测规则测试</span></a></dd>
+                        <dd><a href="{{ url_for('testSite') }}"><i class="fa fa-vcard fa-lg"></i> <span >监测站点测试</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >运行日志</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('logUsr') }}"><i class="fa fa-vcard fa-lg"></i> <span >用户操作日志</span></a></dd>
+                        <dd><a href="{{ url_for('logSys') }}"><i class="fa fa-vcard fa-lg"></i> <span >系统运行日志</span></a></dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px">
+
+            <div style="padding: 15px;font-size: 30px;text-align: center">任务已提交</div>
+
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © copyright - SILD
+    </div>
+</div>
+<script src="../static/layui/layui.js"></script>
+
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
+
+        //日期
+        laydate.render({
+            elem: '#date'
+        });
+        laydate.render({
+            elem: '#date1'
+        });
+
+        //创建一个编辑器
+        var editIndex = layedit.build('LAY_demo_editor');
+
+        //自定义验证规则
+        form.verify({
+            title: function (value) {
+                if (value.length < 5) {
+                    return '标题至少得5个字符啊';
+                }
+            }
+            , pass: [
+                /^[\S]{6,12}$/
+                , '密码必须6到12位，且不能出现空格'
+            ]
+            , content: function (value) {
+                layedit.sync(editIndex);
+            }
+        });
+
+        //监听指定开关
+        form.on('switch(switchTest)', function (data) {
+            layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
+                offset: '6px'
+            });
+            layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+        });
+
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+
+        //表单赋值
+        layui.$('#LAY-component-form-setval').on('click', function () {
+            form.val('example', {
+                "username": "贤心" // "name": "value"
+                , "password": "123456"
+                , "interest": 1
+                , "like[write]": true //复选框选中状态
+                , "close": true //开关状态
+                , "sex": "女"
+                , "desc": "我爱 layui"
+            });
+        });
+
+        //表单取值
+        layui.$('#LAY-component-form-getval').on('click', function () {
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+
+    });
+</script>
+<script>
+
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+    var isShow = true;  //定义一个标志位
+    $('.kit-side-fold').click(function () {
+        //选择出所有的span，并判断是不是hidden
+        $('.layui-nav-item span').each(function () {
+            if ($(this).is(':hidden')) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+        //判断isshow的状态
+        if (isShow) {
+            $('.layui-side.layui-bg-black').width(60); //设置宽度
+            $('.kit-side-fold i').css('margin-right', '70%');  //修改图标的位置
+            //将footer和body的宽度修改
+            $('.layui-body').css('left', 60 + 'px');
+            $('.layui-footer').css('left', 60 + 'px');
+            //将二级导航栏隐藏
+            $('dd span').each(function () {
+                $(this).hide();
+            });
+            //修改标志位
+            isShow = false;
+        } else {
+            $('.layui-side.layui-bg-black').width(200);
+            $('.kit-side-fold i').css('margin-right', '10%');
+            $('.layui-body').css('left', 200 + 'px');
+            $('.layui-footer').css('left', 200 + 'px');
+            $('dd span').each(function () {
+                $(this).show();
+            });
+            isShow = true;
+        }
+    });
+
+</script>
+</body>
+</html>

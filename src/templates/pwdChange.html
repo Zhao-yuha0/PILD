@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>修改密码</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+
+
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">信息泄露监测系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="{{ url_for('testHistory') }}">测试记录</a></li>
+            <!--<li class="layui-nav-item"><a href="">商品管理</a></li>
+												<li class="layui-nav-item"><a href="">用户</a></li>-->
+            <li class="layui-nav-item"><a href="{{ url_for('userMange') }}">账户管理</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;" class="layui-this" >
+                    <img src="../static/img/car.jpg" class="layui-nav-img" alt="">
+                    {{ account }}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="{{ url_for('pwdChange') }}" class="layui-this">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="{{ url_for('index') }}">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="nav">
+
+                <li class="layui-nav-item layui-nav-itemed"><a href="{{ url_for('home') }}">系统状态</a></li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">监测结果</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('dataPrd') }}">长期监测任务</a></dd>
+                        <dd><a href="{{ url_for('dataTempList') }}">临时监测任务</a></dd>
+                        <dd><a href="{{ url_for('data') }}">网页风险信息</a></dd>
+
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">监测任务</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('taskPrd') }}">长期监测任务</a></dd>
+                        <dd><a href="{{ url_for('taskTemp') }}" >临时监测任务</a></dd>
+                        <dd><a href="{{ url_for('taskRule') }}">泄露监测规则</a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">辅助工具</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('testReg') }}">文本检测测试 </a></dd>
+                        <dd><a href="{{ url_for('testRule') }}">监测规则测试</a></dd>
+                        <dd><a href="{{ url_for('testSite') }}">监测站点测试</a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">运行日志</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('logUsr') }}">用户操作日志</a></dd>
+                        <dd><a href="{{ url_for('logSys') }}">系统运行日志</a></dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+
+        <div style="padding: 15px">
+
+            <div style="padding: 15px;font-size: 30px;text-align: center">修改密码</div>
+
+            <form class="layui-form" action="{{ url_for('usr.editPwd') }}" method="post" lay-filter="taskTemp">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">旧密码</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="old" lay-verify="required" lay-reqtext="不能为空" placeholder="请输入旧密码"
+                               size="100" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">旧密码</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="new" lay-verify="required" lay-reqtext="不能为空" placeholder="请输入新密码"
+                               size="100" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit" class="layui-btn" lay-submit="未定义" lay-filter="scan">确认修改</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © copyright - SILD
+
+    </div>
+</div>
+
+</body>
+
+<script src="../static/layui/layui.js"></script>
+{#<script src="../static/js/jquery.js"></script>#}
+
+<script>
+
+</script>
+</html>

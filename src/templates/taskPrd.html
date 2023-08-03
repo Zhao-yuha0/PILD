@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>长期监测任务</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+
+<body class="layui-layout-body">
+
+<div class="site-text" style="margin: 5%; display: none" id="addWindow">
+    <form class="layui-form" id="add" method="post" lay-filter="example"
+          action="{{ url_for('dataPrd.addPrdConfig') }}">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">监控名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="required" lay-reqtext="名称不能为空" placeholder="请输入名称"
+                       size="100" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">监控类别</label>
+            <div class="layui-input-block">
+                <input type="text" name="mark" lay-verify="required" lay-reqtext="类别不能为空" placeholder="请输入类别"
+                       size="100" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择类型</label>
+            <div class="layui-input-block">
+                <select name="taskType" id="taskType" lay-filter="taskType">
+                    <option value="周期全量">周期全量扫描</option>
+                    <option value="周期增量">周期增量扫描</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择频率</label>
+            <div class="layui-input-block">
+                <select name="prd" id="prd" lay-filter="prd">
+                    <option value="每周">每周</option>
+                    <option value="每月">每月</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择时间</label>
+            <div class="layui-input-block">
+                <select name="date" id="date" lay-filter="date">
+                    <option value="1">请选择一个时间</option>
+                    <optgroup label="每周">
+                        <option value=1>周一</option>
+                        <option value=2>周二</option>
+                        <option value=3>周三</option>
+                        <option value=4>周四</option>
+                        <option value=5>周五</option>
+                        <option value=6>周六</option>
+                        <option value=7>周日</option>
+                    </optgroup>
+                    <optgroup label="每月">
+                        <option value=1>第1天</option>
+                        <option value=2>第2天</option>
+                        <option value=3>第3天</option>
+                        <option value=4>第4天</option>
+                        <option value=5>第5天</option>
+                        <option value=6>第6天</option>
+                        <option value=7>第7天</option>
+                        <option value=8>第8天</option>
+                        <option value=9>第9天</option>
+                        <option value=10>第10天</option>
+                        <option value=11>第11天</option>
+                        <option value=12>第12天</option>
+                        <option value=13>第13天</option>
+                        <option value=14>第14天</option>
+                        <option value=15>第15天</option>
+                        <option value=16>第16天</option>
+                        <option value=17>第17天</option>
+                        <option value=18>第18天</option>
+                        <option value=19>第19天</option>
+                        <option value=20>第20天</option>
+                        <option value=21>第21天</option>
+                        <option value=22>第22天</option>
+                        <option value=23>第23天</option>
+                        <option value=24>第24天</option>
+                        <option value=25>第25天</option>
+                        <option value=26>第26天</option>
+                        <option value=27>第27天</option>
+                        <option value=28>第28天</option>
+                        <option value=29>第29天</option>
+                        <option value=30>第30天</option>
+                        <option value=31>第31天</option>
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">起始地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="startUrl" lay-verify="required" lay-reqtext="名称不能为空" placeholder="http://请输入起始网页"
+                       size="100" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择范围</label>
+            <div class="layui-input-block">
+                <select name="domain" id="domain" lay-filter="domain">
+                    <option value="同级域名">同级域名</option>
+                    <option value="仅本域名">仅本域名</option>
+                    <option value="仅本网页">仅本网页</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="未定义" lay-filter="scan">确认提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="site-text" style="margin: 5%; display: none" id="editWindow">
+    <form class="layui-form" id="edit" method="post" lay-filter="example"
+          action="{{ url_for('dataPrd.editPrdConfig') }}">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择开关</label>
+            <div class="layui-input-block">
+                <select name="state" id="state" lay-filter="state">
+                    <option value="on">开启</option>
+                    <option value="off">关闭</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择类型</label>
+            <div class="layui-input-block">
+                <select name="type" id="type" lay-filter="type">
+                    <option value="周期全量">周期全量扫描</option>
+                    <option value="周期增量">周期增量扫描</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择类型</label>
+            <div class="layui-input-block">
+                <select name="type1" id="type1" lay-filter="type1">
+                    <option value="每月">每月</option>
+                    <option value="每周">每周</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择时间</label>
+            <div class="layui-input-block">
+                <select name="type2" id="type2" lay-filter="type2">
+                    <option value="1">请选择一个时间</option>
+                    <optgroup label="每周">
+                        <option value=1>周一</option>
+                        <option value=2>周二</option>
+                        <option value=3>周三</option>
+                        <option value=4>周四</option>
+                        <option value=5>周五</option>
+                        <option value=6>周六</option>
+                        <option value=7>周日</option>
+                    </optgroup>
+                    <optgroup label="每月">
+                        <option value=1>第1天</option>
+                        <option value=2>第2天</option>
+                        <option value=3>第3天</option>
+                        <option value=4>第4天</option>
+                        <option value=5>第5天</option>
+                        <option value=6>第6天</option>
+                        <option value=7>第7天</option>
+                        <option value=8>第8天</option>
+                        <option value=9>第9天</option>
+                        <option value=10>第10天</option>
+                        <option value=11>第11天</option>
+                        <option value=12>第12天</option>
+                        <option value=13>第13天</option>
+                        <option value=14>第14天</option>
+                        <option value=15>第15天</option>
+                        <option value=16>第16天</option>
+                        <option value=17>第17天</option>
+                        <option value=18>第18天</option>
+                        <option value=19>第19天</option>
+                        <option value=20>第20天</option>
+                        <option value=21>第21天</option>
+                        <option value=22>第22天</option>
+                        <option value=23>第23天</option>
+                        <option value=24>第24天</option>
+                        <option value=25>第25天</option>
+                        <option value=26>第26天</option>
+                        <option value=27>第27天</option>
+                        <option value=28>第28天</option>
+                        <option value=29>第29天</option>
+                        <option value=30>第30天</option>
+                        <option value=31>第31天</option>
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">信息泄露监测系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="{{ url_for('testHistory') }}">测试记录</a></li>
+            <!--<li class="layui-nav-item"><a href="">商品管理</a></li>
+												<li class="layui-nav-item"><a href="">用户</a></li>-->
+            <li class="layui-nav-item"><a href="{{ url_for('userMange') }}">账户管理</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="../static/img/car.jpg" class="layui-nav-img" alt="">
+                    {{ account }}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="{{ url_for('pwdChange') }}">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="{{ url_for('index') }}">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <div title="菜单缩放"
+                 style="width: 200px; padding: 0; line-height: 45px; text-align: center; background: #484F64;  margin-right: 10%;"
+                 class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="nav">
+
+                <li class="layui-nav-item layui-nav-itemed"><a href="{{ url_for('home') }}"><i class="fa fa-vcard fa-lg"></i> <span >系统状态</span></a></li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >监测结果</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('dataPrd') }}"><i class="fa fa-vcard fa-lg"></i> <span >长期监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('dataTempList') }}"><i class="fa fa-vcard fa-lg"></i> <span >临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('data') }}" ><i class="fa fa-vcard fa-lg"></i> <span >网页风险信息</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >监测任务</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('taskPrd') }}"class="layui-this"><i class="fa fa-vcard fa-lg"></i> <span >长期监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskTemp') }}"><i class="fa fa-vcard fa-lg"></i> <span >临时监测任务</span></a></dd>
+                        <dd><a href="{{ url_for('taskRule') }}"><i class="fa fa-vcard fa-lg"></i> <span >泄露检测模型</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >辅助工具</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('testReg') }}"><i class="fa fa-vcard fa-lg"></i> <span >文本检测测试</span> </a></dd>
+                        <dd><a href="{{ url_for('testRule') }}"><i class="fa fa-vcard fa-lg"></i> <span >监测规则测试</span></a></dd>
+                        <dd><a href="{{ url_for('testSite') }}"><i class="fa fa-vcard fa-lg"></i> <span >监测站点测试</span></a></dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="fa fa-vcard fa-lg"></i> <span >运行日志</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('logUsr') }}"><i class="fa fa-vcard fa-lg"></i> <span >用户操作日志</span></a></dd>
+                        <dd><a href="{{ url_for('logSys') }}"><i class="fa fa-vcard fa-lg"></i> <span >系统运行日志</span></a></dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+
+        <div style="padding: 15px">
+
+            <div style="padding: 15px;font-size: 30px;text-align: center">长期监测任务</div>
+
+            <table class="layui-hide" id="table" lay-filter="myTable" style="padding: 20px"></table>
+
+            <script type="text/html" id="myToolBar">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="add">增加站点</button>
+                </div>
+            </script>
+
+            <script type="text/html" id="myTool">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="on">开启</a>
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="off">关闭</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                <a class="layui-btn  layui-btn-xs" lay-event="edit">编辑配置</a>
+            </script>
+
+            <script type="text/html" id="switch">
+                <input type="checkbox" name="close" lay-skin="switch" lay-text="ON|OFF">
+            </script>
+
+            <script type="text/html" id="scanType">
+                <input type="checkbox" name="scanMod" lay-skin="switch" lay-text="定期增量扫描|定期全量扫描">
+            </script>
+
+        </div>
+    </div>
+
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © copyright - SILD
+    </div>
+</div>
+<script src="../static/layui/layui.js"></script>
+<script src="../static/js/jquery.js"></script>
+<script>
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    layui.use('table', function () {
+        var table = layui.table;
+
+        table.render({
+            elem: '#table',
+            url: '{{ url_for("dataPrd.showPrdConfig") }}',
+            toolbar: '#myToolBar', //开启头部工具栏，并为其绑定左侧模板
+            //defaultToolbar: ['filter', 'exports', 'print' ],
+            height: 'full-200',
+            title: '长期监测任务',
+            page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                elem: 'table',
+                limit: 10,
+                limits: [10, 20, 30, 40, 50],
+                first: '首页',
+                last: '尾页',
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'], //自定义分页布局
+                //curr: 5, //设定初始在第 5 页
+                groups: 5,//只显示 5 个连续页码
+            },
+
+            cols: [[
+                {type: 'checkbox', fixed: 'left'},
+                {type: 'numbers', title: '序号', width: "5%", sort: true, resize: 'true'},
+
+                {field: 'id', title: 'id', width: "7%", sort: true, hide: true},
+                {field: 'name', title: '名称', width: "7%", sort: true},
+                {field: 'mark', title: '类别', width: "7%", sort: true},
+                {field: 'state', title: '开关', width: "5%", sort: true},
+                {field: 'type', title: '扫描类型', width: "10%", sort: true},
+                {field: 'prd', title: '频率', width: "7%", sort: true},
+                {field: 'date', title: '时间/第几天', width: "10%", sort: true},
+                {field: 'start_url', title: '起始地址', width: "15%", sort: true},
+                {field: 'domain', title: '扫描范围', width: "10%", sort: true},
+
+                {title: '操作', toolbar: '#myTool', width: "27%",},
+            ]],
+
+            response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            },
+
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                var result;
+                console.log(this);
+                console.log(JSON.stringify(res));
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+
+        table.on('toolbar(myTable)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+                case 'add':
+                    layer.open({
+                        type: 1,
+                        title: "添加监控网站：",
+                        area: ['600px', '800px'],
+                        btn: ['', '取消'],
+                        content: $("#addWindow"),
+                        yes: function (index, layero, value) {
+                            console.log('success')
+                        }
+                    });
+                    break
+
+            }
+            ;
+        });
+
+        table.on('tool(myTable)', function (obj) {
+            var data = obj.data;
+            //console.log(obj)
+            if (obj.event === 'del') {
+                layer.confirm('确定删除配置', function (index) {
+                    obj.del();
+                    console.log(obj.data.name)
+                    var input = {
+                        data: JSON.stringify({
+                            "id": obj.data.id
+                        }),
+                    }
+                    $.ajax({
+                        url: "{{ url_for('dataPrd.delConfig') }}",
+                        type: "POST",
+                        data: input,
+                        success: function () {
+                            table.reload('table')
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if (obj.event === 'edit') {
+                var itemID = data.id
+                var itemName = data.name
+
+                layer.open({
+                    type: 1,
+                    title: "修改任务：" + itemName,
+                    area: ['600px', '600px'],
+                    btn: ['确定', '取消'],
+                    content: $("#editWindow"),
+                    yes: function (index, layero, value) {
+
+                        var input = {
+                            data: JSON.stringify({
+                                "id": itemID,
+                                "state": $("#state").val(),
+                                "type": $("#type").val(),
+                                "prd": $("#type1").val(),
+                                "date": $("#type2").val()
+                            }),
+                        }
+
+                        $.ajax({
+                            url: "{{ url_for('dataPrd.editPrdConfig') }}",
+                            type: "POST",
+                            data: input,
+                            success: function () {
+                                layer.close(index);
+                                console.log('edit success')
+                                console.log(input)
+                                table.reload('table')
+                            }
+                        });
+
+
+                    }
+                });
+            } else if (obj.event === 'on') {
+                var input = {
+                    data: JSON.stringify({
+                        "id": obj.data.id,
+                        "switch": "on"
+                    }),
+                }
+                $.ajax({
+                    url: "{{ url_for('dataPrd.switchConfig') }}",
+                    type: "POST",
+                    data: input,
+                    success: function () {
+                        console.log('switch success')
+                        table.reload('table')
+                    }
+                });
+            } else if (obj.event === 'off') {
+                var input = {
+                    data: JSON.stringify({
+                        "id": obj.data.id,
+                        "switch": "off"
+                    }),
+                }
+                $.ajax({
+                    url: "{{ url_for('dataPrd.switchConfig') }}",
+                    type: "POST",
+                    data: input,
+                    success: function () {
+                        console.log('switch success')
+                        table.reload('table')
+                    }
+                });
+            }
+        });
+
+    });
+
+</script>
+<script>
+
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+    var isShow = true;  //定义一个标志位
+    $('.kit-side-fold').click(function () {
+        //选择出所有的span，并判断是不是hidden
+        $('.layui-nav-item span').each(function () {
+            if ($(this).is(':hidden')) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+        //判断isshow的状态
+        if (isShow) {
+            $('.layui-side.layui-bg-black').width(60); //设置宽度
+            $('.kit-side-fold i').css('margin-right', '70%');  //修改图标的位置
+            //将footer和body的宽度修改
+            $('.layui-body').css('left', 60 + 'px');
+            $('.layui-footer').css('left', 60 + 'px');
+            //将二级导航栏隐藏
+            $('dd span').each(function () {
+                $(this).hide();
+            });
+            //修改标志位
+            isShow = false;
+        } else {
+            $('.layui-side.layui-bg-black').width(200);
+            $('.kit-side-fold i').css('margin-right', '10%');
+            $('.layui-body').css('left', 200 + 'px');
+            $('.layui-footer').css('left', 200 + 'px');
+            $('dd span').each(function () {
+                $(this).show();
+            });
+            isShow = true;
+        }
+    });
+
+</script>
+</body>
+</html>
